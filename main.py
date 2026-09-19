@@ -1,104 +1,79 @@
-Sales Report Analyzer
+import csv
 
-A Python command-line tool that reads sales data from a CSV file and automatically generates a sales report.
+filename = input("Enter CSV file path: ").strip()
 
-Features
+try:
+    file = open(filename, "r")
+except FileNotFoundError:
+    print("File not found!")
+    exit()
 
-- Reads sales data from a CSV file
-- Allows the user to enter the CSV file path
-- Calculates total revenue
-- Calculates total units sold
-- Shows revenue for each product
-- Finds the product with the highest total revenue
-- Handles invalid data without crashing
-- Saves the generated report to a text file
+reader = csv.DictReader(file)
 
-How to Run
+total = 0
+total_quantity = 0
 
-Make sure Python 3 is installed.
+product_revenue = {}
 
-Run the program:
+for sale in reader:
+    product = sale["product"]
 
-python main.py
+    try:
+        price = int(sale["price"])
+        quantity = int(sale["quantity"])
+    except ValueError:
+        print(f"Invalid data for {product}")
+        continue
 
-The program will ask you to enter the path to your CSV file.
+    total_quantity = total_quantity + quantity
 
-For example:
+    revenue = price * quantity
+    total = total + revenue
 
-Enter CSV file path: sample_sales.csv
+    if product in product_revenue:
+        product_revenue[product] = product_revenue[product] + revenue
+    else:
+        product_revenue[product] = revenue
 
-A sample CSV file ("sample_sales.csv") is included in this repository so you can test the program immediately.
+file.close()
 
-CSV Format
 
-The CSV file should contain these columns:
+best_product = ""
+best_revenue = 0
 
-product,price,quantity
-Keyboard,25,10
-Mouse,15,20
-Monitor,320,3
-Headphones,90,9
-Webcam,70,12
+for product in product_revenue:
+    revenue = product_revenue[product]
 
-Example Output
+    if revenue > best_revenue:
+        best_revenue = revenue
+        best_product = product
 
+
+report = f"""
 ===== SALES REPORT =====
 
-Total revenue: 3,995
-Products sold: 69
+Total revenue: {total:,}
+Products sold: {total_quantity}
 
 Product performance:
-- Keyboard: 375
-- Mouse: 450
-- Monitor: 1,600
-- Headphones: 810
-- Webcam: 840
+"""
 
-Best product: Monitor
-Best revenue: 1,600
+for product in product_revenue:
+    report = report + f"- {product}: {product_revenue[product]:,}\n"
 
-Report saved to sales_report.txt
+report = report + f"""
+Best product: {best_product}
+Best revenue: {best_revenue:,}
+"""
 
-Error Handling
 
-If the CSV file cannot be found, the program displays:
+print(report)
 
-File not found!
 
-If a product contains invalid price or quantity data, the program skips that row and continues processing the remaining data.
+output_filename = "sales_report.txt"
 
-Output
+file = open(output_filename, "w")
+file.write(report)
+file.close()
 
-The generated report is automatically saved as:
-
-sales_report.txt
-
-Technologies
-
-- Python 3
-- CSV module
-- File handling
-- Dictionaries
-- Loops
-- Conditional statements
-- Exception handling
-
-Project Structure
-
-sales-report-analyzer/
-├── main.py
-├── sample_sales.csv
-├── README.md
-└── sales_report.txt
-
-Future Improvements
-
-- Export reports to Excel
-- Add charts and data visualization
-- Add date-based sales analysis
-- Generate automated email reports
-- Add AI-powered sales summaries
-
-Author
-
-Mohamad Hossein
+print(f"Report saved to {output_filename}")
