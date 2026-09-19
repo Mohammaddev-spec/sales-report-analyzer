@@ -27,7 +27,7 @@ For example:
 
 Enter CSV file path: sample_sales.csv
 
-A sample CSV file ("sample_sales.csv") is included in this repository so you can test the program immediately.
+A sample CSV file named "sample_sales.csv" is included in this repository so you can test the program immediately.
 
 CSV Format
 
@@ -88,8 +88,7 @@ Project Structure
 sales-report-analyzer/
 ├── main.py
 ├── sample_sales.csv
-├── README.md
-└── sales_report.txt
+└── README.md
 
 Future Improvements
 
